@@ -1,15 +1,20 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class Noti {
+  static final onClick = BehaviorSubject<String>();
+  static void onNotificationTap(NotificationResponse notificationResponse) {
+    onClick.add(notificationResponse.payload!);
+  }
+
   static Future initialize(
       FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()!
         .requestNotificationsPermission();
-    tz.initializeTimeZones();
 
     // void onDidReceiveLocalNotification(
     //     int id, String title, String body, String? payload) async {
@@ -56,7 +61,11 @@ class Noti {
     var iOSInit = const DarwinInitializationSettings();
     var initSettings =
         InitializationSettings(android: androidInit, iOS: iOSInit);
-    await flutterLocalNotificationsPlugin.initialize(initSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      initSettings,
+      onDidReceiveBackgroundNotificationResponse: onNotificationTap,
+      onDidReceiveNotificationResponse: onNotificationTap,
+    );
   }
 
   static Future showBigTextNotification(
@@ -107,15 +116,19 @@ class Noti {
       required String body,
       var payload,
       required FlutterLocalNotificationsPlugin fln}) async {
+    tz.initializeTimeZones();
+    var localTime = tz.local;
     await fln.zonedSchedule(
         2,
         'scheduled title',
         'scheduled body',
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        tz.TZDateTime.now(localTime).add(const Duration(seconds: 5)),
         const NotificationDetails(
             android: AndroidNotificationDetails(
                 'your channel id', 'your channel name',
-                channelDescription: 'your channel description'),
+                channelDescription: 'your channel description',
+                importance: Importance.max,
+                priority: Priority.high),
             iOS: DarwinNotificationDetails()),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
