@@ -1,170 +1,88 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:new_notification/noti.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+import 'package:fl_chart/fl_chart.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+//   runApp(const MyApp());
+// }
+
+import 'package:flutter/material.dart';
+import 'package:chart_sparkline/chart_sparkline.dart';
+
+void main() {
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  var data = [0.0, 1.0, 1.5, 2.0, 0.0, 0.0, -0.5, -1.0, -0.5, 0.0, 0.0];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(),
-      home: const Home(),
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  const Home({
-    super.key,
-  });
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Noti.initialize(flutterLocalNotificationsPlugin);
-  }
-
-  void _simpleNotification() {
-    Noti.showBigTextNotification(
-        title: 'Hurray!!',
-        body: 'This is your first notification',
-        fln: flutterLocalNotificationsPlugin);
-  }
-
-  void _periodicNotification() {
-    Noti.showPerodicNotification(
-        title: 'Hurray!!',
-        body: 'This will appear again in 1 min',
-        fln: flutterLocalNotificationsPlugin);
-  }
-
-  void _cancelPerodicNotification() {
-    Noti.cancelPerodicNotification(id: 1, fln: flutterLocalNotificationsPlugin);
-  }
-
-  void _scheduledNotification() {
-    Noti.showScheduledNotification(
-        title: 'Scheduled Notification',
-        body: 'This is a scheduled notification.',
-        fln: flutterLocalNotificationsPlugin);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [
-          Color(0xff1f005c),
-          Color(0xff5b0060),
-          Color(0xff870160),
-          Color(0xffac255e),
-          Color(0xffca485c),
-          Color(0xffe16b5c),
-          Color(0xfff39060),
-          Color(0xffffb56b),
-        ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomButton(
-                title: 'Simple Notification',
-                onPressed: _simpleNotification,
-                icon: Icons.notifications,
-                // type: Noti.showBigTextNotification(
-                //     title: 'Hurray!!',
-                //     body: 'This is your first notification',
-                //     fln: flutterLocalNotificationsPlugin),
-              ),
-              CustomButton(
-                title: 'Periodic Notification',
-                onPressed: _periodicNotification,
-                icon: Icons.av_timer,
-                // type: Noti.showBigTextNotification(
-                //     title: 'Hurray!!',
-                //     body: 'This is your first notification',
-                //     fln: flutterLocalNotificationsPlugin),
-              ),
-              CustomButton(
-                title: 'Cancel Perodic Notification',
-                onPressed: _cancelPerodicNotification,
-                icon: Icons.timer_off_outlined,
-
-                // type: Noti.showBigTextNotification(
-                //     title: 'Hurray!!',
-                //     body: 'This is your first notification',
-                //     fln: flutterLocalNotificationsPlugin),
-              ),
-              CustomButton(
-                  icon: Icons.access_time_rounded,
-                  title: 'Schedule Notification',
-                  onPressed: _scheduledNotification)
-            ]),
-      ),
-    );
-  }
-}
-
-class CustomButton extends StatelessWidget {
-  // Future<dynamic> type;
-  VoidCallback onPressed;
-  IconData icon;
-  String title;
-  CustomButton({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.onPressed,
-    // required this.type,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Center(
-        child: Container(
-          decoration: BoxDecoration(boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 12,
-              offset: Offset(5, 1),
-            )
-          ]),
-          height: 40,
-          child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                  elevation: 9,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24)),
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.deepOrange),
-              onPressed: onPressed,
-              icon: Icon(icon),
-              label: Text(title)),
+      home: Scaffold(
+        backgroundColor: Color(0xFFF0F2F6),
+        body: Center(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            width: double.infinity,
+            height: 300,
+            child: LineChart(
+              // curve: Curves.easeInCubic,
+              LineChartData(
+                  lineTouchData: LineTouchData(
+                      getTouchLineEnd: (barData, spotIndex) =>
+                          barData.spots[spotIndex].y + 5,
+                      getTouchLineStart: (barData, spotIndex) =>
+                          barData.spots[spotIndex].y - 5,
+                      getTouchedSpotIndicator: (barData, spotIndexes) => [
+                            TouchedSpotIndicatorData(
+                                FlLine(dashArray: [4, 4], color: Colors.grey),
+                                FlDotData())
+                          ],
+                      touchTooltipData: LineTouchTooltipData(
+                        tooltipBgColor: Colors.white,
+                        getTooltipItems: (touchedSpots) {
+                          return [
+                            LineTooltipItem(
+                                'May 9, 2023',
+                                TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400)),
+                          ];
+                        },
+                      )),
+                  titlesData: FlTitlesData(show: false),
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                        dotData: FlDotData(show: false),
+                        isCurved: true,
+                        color: Color(0xff0B72EB),
+                        spots: [
+                          const FlSpot(0, 20),
+                          const FlSpot(1, 3),
+                          const FlSpot(2, 10),
+                          const FlSpot(3, 7),
+                          const FlSpot(4, 15),
+                          const FlSpot(5, 13),
+                          const FlSpot(6, 17),
+                          const FlSpot(7, 15),
+                          const FlSpot(8, 2)
+                        ])
+                  ]),
+            ),
+          ),
         ),
       ),
     );
