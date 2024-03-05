@@ -25,18 +25,18 @@ void main() {
 class MyApp extends StatelessWidget {
   List<FlSpot> data = [
     const FlSpot(1, 300000.9),
-    const FlSpot(2, 299900.9),
-    const FlSpot(3, 299800.9),
-    const FlSpot(4, 299700.9),
-    const FlSpot(5, 299600.9),
-    const FlSpot(6, 299500.9),
-    const FlSpot(7, 299400.9),
-    const FlSpot(8, 2000),
-    const FlSpot(9, 700000),
-    const FlSpot(10, 15000),
-    const FlSpot(11, 13000),
-    const FlSpot(12, 430000),
-    const FlSpot(13, 370000),
+    const FlSpot(2, 299800.9),
+    const FlSpot(3, 299600.9),
+    const FlSpot(4, 299400.9),
+    const FlSpot(5, 299200.9),
+    const FlSpot(6, 299000.9),
+    const FlSpot(7, 298800.9),
+    const FlSpot(8, 298600.9),
+    const FlSpot(9, 298400.9),
+    const FlSpot(10, 298200.9),
+    const FlSpot(11, 298000.9),
+    const FlSpot(12, 297800.9),
+    const FlSpot(13, 297600.9),
     const FlSpot(14, 1500),
     const FlSpot(15, 2000),
     const FlSpot(16, 70000),
@@ -51,8 +51,8 @@ class MyApp extends StatelessWidget {
     const FlSpot(25, 20000.10),
     const FlSpot(26, 70000),
     const FlSpot(27, 150000),
-    const FlSpot(28, 603000),
-    const FlSpot(29, 703000),
+    const FlSpot(28, 60300),
+    const FlSpot(29, 70300),
     const FlSpot(30, 17000),
   ];
 
@@ -71,13 +71,8 @@ class MyApp extends StatelessWidget {
               LineChartData(
                   lineTouchData: LineTouchData(
                       getTouchLineEnd: (barData, spotIndex) =>
-                          barData.spots[spotIndex].y + 100000,
+                          barData.spots[spotIndex].y + 1000000,
                       getTouchLineStart: (barData, spotIndex) => 0,
-                      touchCallback: (event, touchResponse) {
-                        if (event is FlTapUpEvent) {
-                          // handle tap here
-                        }
-                      },
                       getTouchedSpotIndicator: (barData, spotIndexes) => [
                             TouchedSpotIndicatorData(
                                 FlLine(
@@ -90,6 +85,7 @@ class MyApp extends StatelessWidget {
                         maxContentWidth: 150,
                         tooltipRoundedRadius: 8,
                         fitInsideHorizontally: true,
+                        fitInsideVertically: true,
                         tooltipBgColor: Colors.white,
                         getTooltipItems: (touchedSpots) {
                           return [
